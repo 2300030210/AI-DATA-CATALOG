@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fb">
+  <title>Atlas — AI Data Catalog</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172237;
+      --muted: #788398;
+      --line: #e8ebf1;
+      --surface: #fff;
+      --canvas: #f7f8fb;
+      --blue: #5269e8;
+      --blue-soft: #eef0ff;
+      --green: #23896d;
+      --green-soft: #e8f6f1;
+      --amber: #a86e17;
+      --amber-soft: #fff4df;
+      --shadow: 0 8px 26px rgb(34 47 76 / 5%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--canvas); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { display: grid; grid-template-columns: 238px minmax(0, 1fr); min-height: 100vh; }
+    aside { padding: 27px 17px; background: var(--surface); border-right: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 10px 35px; font-size: 19px; font-weight: 750; letter-spacing: -.5px; }
+    .brand-mark { display: grid; width: 33px; height: 33px; place-items: center; border-radius: 11px; color: white; background: linear-gradient(145deg, #7182f6, #4b5ee0); font-size: 18px; }
+    .nav-label { padding: 0 12px 10px; color: #a0a9b8; font-size: 10px; font-weight: 750; letter-spacing: 1.15px; text-transform: uppercase; }
+    .nav { display: grid; gap: 5px; }
+    .nav a { display: flex; align-items: center; gap: 12px; padding: 11px 12px; color: #68758a; text-decoration: none; font-size: 13px; font-weight: 550; border-radius: 9px; }
+    .nav a.active { color: var(--blue); background: var(--blue-soft); font-weight: 700; }
+    .nav-icon { width: 17px; text-align: center; font-size: 16px; }
+    .sidebar-bottom { margin: 53px 8px 0; padding: 15px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .workspace { min-width: 0; }
+    header { display: flex; min-height: 70px; align-items: center; justify-content: space-between; padding: 0 4.2%; background: var(--surface); border-bottom: 1px solid var(--line); }
+    .crumb { color: var(--muted); font-size: 12px; }
+    .crumb strong { color: var(--ink); font-weight: 650; }
+    .profile { display: flex; align-items: center; gap: 10px; color: #526078; font-size: 12px; }
+    .avatar { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 50%; color: #4a59be; background: #e9ebff; font-size: 11px; font-weight: 750; }
+    main { width: min(1190px, 100%); margin: auto; padding: 36px 4.2% 55px; }
+    .eyebrow { color: var(--blue); font-size: 10px; font-weight: 750; letter-spacing: 1.2px; text-transform: uppercase; }
+    h1 { margin: 8px 0 6px; font-size: clamp(24px, 3vw, 30px); letter-spacing: -.9px; }
+    .intro { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .top-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+    .button-primary { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 0; border-radius: 8px; color: white; background: var(--blue); font-size: 12px; font-weight: 650; box-shadow: 0 4px 10px rgb(82 105 232 / 18%); }
+    .button-primary:hover { background: #4359d3; }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; margin: 27px 0 25px; }
+    .stat { padding: 17px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 11px; box-shadow: var(--shadow); }
+    .stat-label { color: var(--muted); font-size: 11px; }
+    .stat-number { margin-top: 9px; font-size: 24px; font-weight: 720; letter-spacing: -.8px; }
+    .stat-note { margin-top: 5px; color: var(--green); font-size: 10px; }
+    .stat-note.neutral { color: var(--muted); }
+    .search-panel { padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+    .searchbox { display: flex; min-height: 47px; align-items: center; gap: 10px; padding: 0 13px; border: 1px solid #dfe3ed; border-radius: 9px; background: #fcfcfe; }
+    .searchbox:focus-within { border-color: #9aa8fb; box-shadow: 0 0 0 3px rgb(82 105 232 / 10%); }
+    .search-icon { color: #8d98aa; font-size: 17px; }
+    .searchbox input { width: 100%; border: 0; outline: 0; color: var(--ink); background: transparent; font-size: 13px; }
+    .searchbox input::placeholder { color: #9aa3b2; }
+    .shortcut { white-space: nowrap; padding: 4px 6px; border: 1px solid var(--line); border-radius: 5px; color: #8d98aa; font-size: 10px; }
+    .search-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 13px; }
+    .suggestions { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; color: #8993a5; font-size: 10px; }
+    .suggestions button { padding: 5px 9px; border: 1px solid #e7eaf0; border-radius: 20px; color: #69758a; background: white; font-size: 10px; }
+    .suggestions button:hover { color: var(--blue); border-color: #cdd3ff; background: #f8f8ff; }
+    .smart-hint { color: #929cad; font-size: 10px; }
+    .catalog { margin-top: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+    .catalog-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 17px 19px; border-bottom: 1px solid var(--line); }
+    .catalog-heading h2 { margin: 0; font-size: 14px; letter-spacing: -.2px; }
+    .catalog-count { margin-left: 7px; color: var(--muted); font-size: 11px; font-weight: 450; }
+    .filters { display: flex; align-items: center; gap: 8px; }
+    .filters select { padding: 7px 28px 7px 9px; border: 1px solid var(--line); border-radius: 7px; color: #667187; background: white; font-size: 10px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 11px 14px; color: #969faf; background: #fcfcfd; font-size: 9px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; white-space: nowrap; }
+    td { padding: 14px; border-top: 1px solid #f0f1f5; color: #657187; font-size: 11px; white-space: nowrap; }
+    tbody tr:hover { background: #fcfcff; }
+    .asset-name { display: flex; align-items: center; gap: 10px; color: var(--ink); font-size: 11px; font-weight: 650; }
+    .asset-icon { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 8px; color: #6977d7; background: #f0f1ff; font-size: 14px; }
+    .asset-type { margin-top: 3px; color: #98a1b0; font-size: 9px; font-weight: 450; }
+    .tag { display: inline-flex; align-items: center; margin: 2px 3px 2px 0; padding: 4px 7px; border-radius: 5px; color: #5967c4; background: #f0f1ff; font-size: 9px; }
+    .tag.green { color: var(--green); background: var(--green-soft); }
+    .tag.amber { color: var(--amber); background: var(--amber-soft); }
+    .status { display: inline-flex; align-items: center; gap: 5px; color: var(--green); font-size: 10px; }
+    .status::before { width: 6px; height: 6px; border-radius: 50%; background: #42b38b; content: ""; }
+    .status.review { color: var(--amber); }
+    .status.review::before { background: #e5a945; }
+    .empty { padding: 38px 15px; color: var(--muted); text-align: center; font-size: 12px; }
+    .toast { position: fixed; right: 25px; bottom: 24px; max-width: min(400px, calc(100vw - 32px)); padding: 12px 16px; border-radius: 9px; color: white; background: #26334b; box-shadow: var(--shadow); font-size: 12px; opacity: 0; transform: translateY(8px); transition: .2s ease; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    @media (max-width: 850px) {
+      .app { grid-template-columns: 66px minmax(0, 1fr); }
+      aside { padding: 20px 10px; }
+      .brand { justify-content: center; padding: 0 0 30px; }
+      .brand-name, .nav-label, .nav-text, .sidebar-bottom { display: none; }
+      .nav a { justify-content: center; padding: 11px 0; }
+      .nav-icon { font-size: 18px; }
+      main { padding-top: 27px; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 540px) {
+      header { padding: 0 18px; }
+      main { padding: 25px 14px 40px; }
+      .top-row { align-items: flex-start; flex-direction: column; }
+      .button-primary { align-self: stretch; justify-content: center; }
+      .stats { gap: 9px; margin: 19px 0; }
+      .stat { padding: 13px; }
+      .stat-number { font-size: 21px; }
+      .search-panel { padding: 12px; }
+      .shortcut, .smart-hint { display: none; }
+      .search-bottom, .catalog-heading { align-items: flex-start; flex-direction: column; }
+      .filters { width: 100%; }
+      .filters select { flex: 1; }
+      th, td { padding-right: 11px; padding-left: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside aria-label="Main navigation">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✳</span><span class="brand-name">atlas</span></div>
+      <div class="nav-label">Workspace</div>
+      <nav class="nav">
+        <a class="active" href="#catalog" aria-current="page"><span class="nav-icon">▦</span><span class="nav-text">Catalog</span></a>
+        <a href="#catalog" data-notice="Lineage view is coming soon."><span class="nav-icon">⌘</span><span class="nav-text">Data lineage</span></a>
+        <a href="#catalog" data-notice="Quality monitoring is coming soon."><span class="nav-icon">◈</span><span class="nav-text">Data quality</span></a>
+        <a href="#catalog" data-notice="Governance settings are coming soon."><span class="nav-icon">⬡</span><span class="nav-text">Governance</span></a>
+      </nav>
+      <div class="sidebar-bottom">Your team's trusted home for discovering and understanding data.</div>
+    </aside>
+    <div class="workspace">
+      <header>
+        <div class="crumb">Workspace <span aria-hidden="true">/</span> <strong>Data catalog</strong></div>
+        <div class="profile"><span>Data team</span><span class="avatar" aria-label="Data team profile">DT</span></div>
+      </header>
+      <main id="catalog">
+        <section class="top-row" aria-labelledby="page-title">
+          <div>
+            <div class="eyebrow">Your data, understood</div>
+            <h1 id="page-title">Data catalog</h1>
+            <p class="intro">Discover, understand, and trust the data your team works with.</p>
+          </div>
+          <button class="button-primary" id="discover-button" type="button"><span aria-hidden="true">✦</span> Run discovery</button>
+        </section>
+
+        <section class="stats" aria-label="Catalog overview">
+          <article class="stat"><div class="stat-label">Data assets</div><div class="stat-number" id="asset-total">8</div><div class="stat-note">Across 4 data sources</div></article>
+          <article class="stat"><div class="stat-label">AI-classified</div><div class="stat-number" id="classified-total">7</div><div class="stat-note">Metadata enriched</div></article>
+          <article class="stat"><div class="stat-label">Data domains</div><div class="stat-number">4</div><div class="stat-note neutral">Organized for discovery</div></article>
+          <article class="stat"><div class="stat-label">Needs review</div><div class="stat-number" id="review-total">1</div><div class="stat-note neutral">Suggested tags to confirm</div></article>
+        </section>
+
+        <section class="search-panel" aria-label="Search data assets">
+          <label class="searchbox" for="catalog-search">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input id="catalog-search" type="search" autocomplete="off" placeholder="Ask a question or search your data…">
+            <span class="shortcut" aria-hidden="true">⌘ K</span>
+          </label>
+          <div class="search-bottom">
+            <div class="suggestions"><span>Try</span>
+              <button type="button" data-query="customer data with personal information">Sensitive customer data</button>
+              <button type="button" data-query="finance revenue">Finance revenue</button>
+              <button type="button" data-query="recent marketing">Recent marketing assets</button>
+            </div>
+            <span class="smart-hint">Search names, descriptions, owners, tags &amp; domains</span>
+          </div>
+        </section>
+
+        <section class="catalog" aria-labelledby="assets-heading">
+          <div class="catalog-heading">
+            <h2 id="assets-heading">All data assets <span class="catalog-count" id="result-count"></span></h2>
+            <div class="filters">
+              <select id="domain-filter" aria-label="Filter by domain">
+                <option value="all">All domains</option>
+                <option>Finance</option><option>Customer</option><option>Marketing</option><option>Operations</option>
+              </select>
+              <select id="type-filter" aria-label="Filter by asset type">
+                <option value="all">All types</option>
+                <option>Table</option><option>Dashboard</option><option>Model</option><option>Report</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Asset name</th><th scope="col">Domain</th><th scope="col">Owner</th><th scope="col">Classification</th><th scope="col">Updated</th><th scope="col">Status</th></tr></thead>
+              <tbody id="asset-list"></tbody>
+            </table>
+            <div id="empty-state" class="empty" hidden>No matching assets. Try a different search or filter.</div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    const assets = [
+      { name: "customer_profiles", type: "Table", icon: "▤", domain: "Customer", owner: "Customer Analytics", tags: ["PII", "Customer 360"], sensitivity: "Sensitive", updated: "2 hours ago", status: "Classified", description: "Unified customer profile with email, address, and account details", source: "Snowflake" },
+      { name: "monthly_revenue", type: "Table", icon: "▤", domain: "Finance", owner: "Finance", tags: ["Revenue", "Monthly"], sensitivity: "Internal", updated: "4 hours ago", status: "Classified", description: "Monthly recognized revenue by region, subscription, and product", source: "Snowflake" },
+      { name: "Customer Health Overview", type: "Dashboard", icon: "▥", domain: "Customer", owner: "Customer Success", tags: ["Retention", "Customer 360"], sensitivity: "Internal", updated: "Today", status: "Classified", description: "Dashboard for customer health, churn risk, and retention", source: "Looker" },
+      { name: "web_events", type: "Table", icon: "▤", domain: "Marketing", owner: "Growth", tags: ["Web", "Behavior"], sensitivity: "Internal", updated: "Today", status: "Classified", description: "Website clickstream events, sessions, and campaign attribution", source: "BigQuery" },
+      { name: "orders_fact", type: "Table", icon: "▤", domain: "Finance", owner: "Data Engineering", tags: ["Orders", "Sales"], sensitivity: "Internal", updated: "Yesterday", status: "Classified", description: "Transaction and order line items used in sales reporting", source: "Snowflake" },
+      { name: "lead_conversion_model", type: "Model", icon: "◉", domain: "Marketing", owner: "Growth", tags: ["Conversion", "ML"], sensitivity: "Internal", updated: "Yesterday", status: "Classified", description: "Predicts lead conversion from campaign and engagement signals", source: "dbt" },
+      { name: "support_tickets", type: "Table", icon: "▤", domain: "Operations", owner: "Support Ops", tags: ["Support", "Feedback"], sensitivity: "Confidential", updated: "2 days ago", status: "Classified", description: "Customer support requests, ticket notes, and resolution history", source: "BigQuery" },
+      { name: "quarterly_forecast", type: "Report", icon: "▧", domain: "Finance", owner: "Finance", tags: ["Forecast", "Planning"], sensitivity: "Internal", updated: "3 days ago", status: "Needs review", description: "Quarterly revenue forecast and planning assumptions by business unit", source: "Looker" }
+    ];
+
+    const searchInput = document.querySelector("#catalog-search");
+    const domainFilter = document.querySelector("#domain-filter");
+    const typeFilter = document.querySelector("#type-filter");
+    const list = document.querySelector("#asset-list");
+    const toast = document.querySelector("#toast");
+    let toastTimer;
+
+    function searchableText(asset) {
+      return [asset.name, asset.type, asset.domain, asset.owner, asset.tags.join(" "), asset.description, asset.source, asset.sensitivity]
+        .join(" ").toLowerCase().replaceAll("_", " ");
+    }
+
+    function matchesQuery(asset, query) {
+      const stopWords = new Set(["a", "all", "and", "asset", "assets", "data", "find", "for", "in", "information", "me", "of", "please", "show", "table", "tables", "the", "with"]);
+      const terms = query.toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, " ").split(/\s+/).filter(term => term && !stopWords.has(term));
+      if (!terms.length) return true;
+      const text = searchableText(asset);
+      const synonyms = {
+        pii: ["personal", "sensitive", "email", "address"],
+        personal: ["pii", "sensitive", "email", "address"],
+        sensitive: ["pii", "confidential", "personal"],
+        customer: ["client", "account", "retention", "churn"],
+        finance: ["revenue", "orders", "forecast", "sales"],
+        revenue: ["finance", "sales", "forecast"],
+        marketing: ["growth", "campaign", "conversion", "web"],
+        recent: ["today", "hours", "yesterday"]
+      };
+      return terms.every(term => text.includes(term) || (synonyms[term] || []).some(word => text.includes(word)));
+    }
+
+    function render() {
+      const query = searchInput.value.trim();
+      const filtered = assets.filter(asset =>
+        (domainFilter.value === "all" || asset.domain === domainFilter.value) &&
+        (typeFilter.value === "all" || asset.type === typeFilter.value) &&
+        matchesQuery(asset, query)
+      );
+      list.innerHTML = filtered.map(asset => {
+        const status = asset.status === "Classified" ? "Classified" : "Needs review";
+        const statusClass = status === "Classified" ? "" : " review";
+        const tags = asset.tags.map(tag => {
+          const style = tag === "PII" ? " amber" : tag === "Revenue" || tag === "Customer 360" ? " green" : "";
+          return `<span class="tag${style}">${escapeHTML(tag)}</span>`;
+        }).join("");
+        return `<tr>
+          <td><div class="asset-name"><span class="asset-icon" aria-hidden="true">${escapeHTML(asset.icon)}</span><span>${escapeHTML(asset.name)}<span class="asset-type">${escapeHTML(asset.source)} · ${escapeHTML(asset.type)}</span></span></div></td>
+          <td>${escapeHTML(asset.domain)}</td><td>${escapeHTML(asset.owner)}</td>
+          <td>${tags}</td><td>${escapeHTML(asset.updated)}</td>
+          <td><span class="status${statusClass}">${status}</span></td>
+        </tr>`;
+      }).join("");
+      document.querySelector("#empty-state").hidden = filtered.length !== 0;
+      document.querySelector("#result-count").textContent = `${filtered.length} ${filtered.length === 1 ? "asset" : "assets"}`;
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[char]);
+    }
+
+    function announce(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
+    }
+
+    searchInput.addEventListener("input", render);
+    domainFilter.addEventListener("change", render);
+    typeFilter.addEventListener("change", render);
+    document.querySelectorAll("[data-query]").forEach(button => button.addEventListener("click", () => {
+      searchInput.value = button.dataset.query;
+      render();
+      searchInput.focus();
+    }));
+    document.querySelectorAll("[data-notice]").forEach(link => link.addEventListener("click", event => {
+      event.preventDefault();
+      announce(link.dataset.notice);
+    }));
+    document.querySelector("#discover-button").addEventListener("click", () => {
+      let updated = 0;
+      assets.forEach(asset => {
+        if (asset.status !== "Needs review") return;
+        if (/forecast|revenue|finance/i.test(`${asset.name} ${asset.description}`)) {
+          asset.tags = [...new Set([...asset.tags, "Revenue", "Forecast"])];
+          asset.sensitivity = "Internal";
+          asset.status = "Classified";
+          updated++;
+        }
+      });
+      if (updated) {
+        document.querySelector("#classified-total").textContent = assets.filter(asset => asset.status === "Classified").length;
+        document.querySelector("#review-total").textContent = assets.filter(asset => asset.status === "Needs review").length;
+        announce(`Discovery complete — ${updated} asset classified with suggested tags.`);
+        render();
+      } else {
+        announce("Discovery complete — all sample assets are classified.");
+      }
+    });
+    document.addEventListener("keydown", event => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        searchInput.focus();
+      }
+      if (event.key === "Escape" && document.activeElement === searchInput) {
+        searchInput.value = "";
+        render();
+        searchInput.blur();
+      }
+    });
+    render();
+  </script>
+</body>
+</html>
