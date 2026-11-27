@@ -1,0 +1,6 @@
+campaign_id,channel,segment,impressions,clicks,conversions,cost,launch_date
+CMP-01,Email,Returning,120000,5400,612,8400,2026-02-01
+CMP-02,Search,New Customers,240000,8200,488,14200,2026-02-05
+CMP-03,Social,Returning,310000,12100,934,18100,2026-02-07
+CMP-04,Partner,Enterprise,90000,3200,280,9700,2026-02-10
+CMP-05,Email,Enterprise,76000,4100,375,6800,2026-02-12

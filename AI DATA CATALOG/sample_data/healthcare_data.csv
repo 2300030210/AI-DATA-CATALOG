@@ -1,0 +1,6 @@
+visit_id,patient_group,department,visit_type,wait_minutes,diagnosis_code,visit_date
+V-001,G-102,Cardiology,Follow-up,22,I25.10,2026-01-04
+V-002,G-221,General Medicine,New,38,J06.9,2026-01-05
+V-003,G-102,Cardiology,Lab Review,18,E11.9,2026-01-06
+V-004,G-404,Orthopedics,New,47,M25.5,2026-01-07
+V-005,G-118,General Medicine,Follow-up,25,I10,2026-01-08

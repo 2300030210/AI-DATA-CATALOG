@@ -1,0 +1,6 @@
+customer_id,name,age,gender,city,income,purchase_amount,registration_date
+1001,Aarav Mehta,28,Mumbai,M,68000,1240.50,2024-01-12
+1002,Ananya Rao,34,Bengaluru,F,92000,2180.00,2024-02-03
+1003,Rohan Shah,41,Pune,M,115000,450.75,2024-02-19
+1004,Meera Iyer,25,Chennai,F,54000,890.20,2024-03-22
+1005,Kabir Singh,39,Delhi,M,104000,3120.00,2024-04-14

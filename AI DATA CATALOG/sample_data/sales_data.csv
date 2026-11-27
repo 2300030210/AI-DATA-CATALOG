@@ -1,0 +1,6 @@
+order_id,customer_id,product,quantity,unit_price,region,order_date,channel
+SO-10001,1001,Analytics Pro,2,499.0,West,2026-01-12,Online
+SO-10002,1002,Data Gateway,1,1299.0,South,2026-01-13,Partner
+SO-10003,1003,Analytics Pro,4,499.0,West,2026-01-14,Online
+SO-10004,1004,Cloud Connect,3,799.0,South,2026-01-16,Direct
+SO-10005,1005,Data Gateway,2,1299.0,North,2026-01-18,Partner

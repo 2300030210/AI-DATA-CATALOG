@@ -1,0 +1,6 @@
+product_id,product_name,category,unit_cost,unit_price,stock_on_hand,reorder_level,supplier
+P-100,Analytics Pro,Software,180,499,240,80,Northstar Labs
+P-101,Data Gateway,Software,540,1299,95,40,Vector Systems
+P-102,Cloud Connect,Platform,310,799,160,55,Northstar Labs
+P-103,Model Monitor,Platform,210,649,74,35,Signal Works
+P-104,Secure Export,Security,120,399,280,90,Clearpath Tech

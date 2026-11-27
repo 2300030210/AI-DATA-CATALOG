@@ -1,0 +1,6 @@
+student_id,name,age,department,cgpa,attendance,semester
+ST-001,Neha Verma,20,Computer Science,8.7,94.2,4
+ST-002,Arjun Nair,21,Information Systems,7.9,86.5,5
+ST-003,Ishita Das,19,Data Science,9.1,97.0,3
+ST-004,Vivaan Kapoor,22,Electronics,7.2,78.4,6
+ST-005,Sara Khan,20,Computer Science,8.4,91.3,4

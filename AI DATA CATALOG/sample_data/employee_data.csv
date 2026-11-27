@@ -1,0 +1,6 @@
+employee_id,name,department,job_level,location,salary,join_date,performance_score
+EMP-001,Aditya Joshi,Engineering,L3,Pune,1080000,2021-07-14,4.4
+EMP-002,Diya Menon,People,L2,Bengaluru,780000,2022-02-20,4.1
+EMP-003,Manav Gupta,Finance,L4,Mumbai,1450000,2019-11-08,4.7
+EMP-004,Kiara Roy,Marketing,L2,Delhi,820000,2023-01-12,3.9
+EMP-005,Reyansh Jain,Engineering,L3,Chennai,1120000,2020-05-18,4.5
